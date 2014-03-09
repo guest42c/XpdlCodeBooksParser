@@ -2,6 +2,7 @@ package br.com.samuraidev.XpdlParser;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jdom.Document;
@@ -15,8 +16,14 @@ public class XpdlParser {
 
 	File xmlFile;
 
+	List<Transition> transitions;
+
+	List<Activity> activitiesList;
+
 	public XpdlParser() {
 		builder = new SAXBuilder();
+		transitions = new ArrayList<Transition>();
+		activitiesList = new ArrayList<Activity>();
 	}
 
 	private Element getChildWithName(Element activity, String name) {
@@ -31,22 +38,25 @@ public class XpdlParser {
 		return null;
 	}
 
-	private String getActivityType(Element activity) {
+	private ActivityType getActivityType(Element activity) {
 		if (getChildWithName(activity, "Event") != null) {
-			return "Event";
+			return ActivityType.EVENT;
 		}
 		if (getChildWithName(activity, "Implementation") != null) {
 			Element implementation = getChildWithName(activity,
 					"Implementation");
 			if (getChildWithName(implementation, "Task") != null) {
-				return "Task Implementation";
+				return ActivityType.TASK_IMPLEMENTATION;
 			}
-			return "Implementation";
+			return ActivityType.IMPLEMENTATION;
 		}
 		if (getChildWithName(activity, "Route") != null) {
-			return "Route";
+			return ActivityType.ROUTE;
 		}
-		return "";
+		if (getChildWithName(activity, "Gateway") != null) {
+			return ActivityType.GATEWAY;
+		}
+		return ActivityType.NONE;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -68,27 +78,29 @@ public class XpdlParser {
 								List<Element> activities = wfpChild
 										.getChildren();
 								for (Element activity : activities) {
-									System.out.println("---");
-									System.out.println("Id: "
-											+ activity.getAttributeValue("Id"));
-									System.out.println("Name: "
-											+ activity
-													.getAttributeValue("Name"));
-									System.out
-											.println(getActivityType(activity));
+									Activity actvty = new Activity();
+									actvty.setId(activity
+											.getAttributeValue("Id"));
+									actvty.setName(activity
+											.getAttributeValue("Name"));
+									actvty.setType(getActivityType(activity));
+									activitiesList.add(actvty);
 								}
 							} else if (wfpChild.getName().equals("Transitions")) {
 								// Lista as transições entre os elementos
 								List<Element> transitions = wfpChild
 										.getChildren();
 								for (Element transition : transitions) {
+									String fromStr = transition
+											.getAttributeValue("From");
+									String toStr = transition
+											.getAttributeValue("To");
+									Activity from = getActivityById(fromStr);
+									Activity to = getActivityById(toStr);
+									Transition transit = new Transition(from,
+											to);
 									System.out.println("---");
-									System.out.println("From: "
-											+ transition
-													.getAttributeValue("From"));
-									System.out.println("To: "
-											+ transition
-													.getAttributeValue("To"));
+									System.out.println(transit);
 								}
 							}
 						}
@@ -101,5 +113,14 @@ public class XpdlParser {
 		} catch (JDOMException jdomex) {
 			System.out.println(jdomex.getMessage());
 		}
+	}
+
+	private Activity getActivityById(String id) {
+		for (Activity activity : activitiesList) {
+			if (id.equals(activity.getId())) {
+				return activity;
+			}
+		}
+		return null;
 	}
 }
