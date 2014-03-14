@@ -10,6 +10,8 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
+import br.com.samuraidev.XpdlParser.enums.ActivityType;
+
 public class XpdlParser {
 
 	SAXBuilder builder;
@@ -19,6 +21,8 @@ public class XpdlParser {
 	List<Transition> transitions;
 
 	List<Activity> activitiesList;
+
+	List<CodeBook> codebookList;
 
 	public XpdlParser() {
 		builder = new SAXBuilder();
@@ -88,19 +92,18 @@ public class XpdlParser {
 								}
 							} else if (wfpChild.getName().equals("Transitions")) {
 								// Lista as transições entre os elementos
-								List<Element> transitions = wfpChild
+								List<Element> transitionsWfp = wfpChild
 										.getChildren();
-								for (Element transition : transitions) {
-									String fromStr = transition
+								for (Element transitionWpf : transitionsWfp) {
+									String fromStr = transitionWpf
 											.getAttributeValue("From");
-									String toStr = transition
+									String toStr = transitionWpf
 											.getAttributeValue("To");
 									Activity from = getActivityById(fromStr);
 									Activity to = getActivityById(toStr);
-									Transition transit = new Transition(from,
-											to);
-									System.out.println("---");
-									System.out.println(transit);
+									Transition transition = new Transition(
+											from, to);
+									getTransitions().add(transition);
 								}
 							}
 						}
@@ -119,6 +122,72 @@ public class XpdlParser {
 		for (Activity activity : activitiesList) {
 			if (id.equals(activity.getId())) {
 				return activity;
+			}
+		}
+		return null;
+	}
+
+	public List<CodeBook> getCodebookList(Integer size) {
+
+		return codebookList;
+	}
+
+	public void setCodebookList(List<CodeBook> codebookList) {
+		this.codebookList = codebookList;
+	}
+
+	public List<Transition> getTransitions() {
+		return transitions;
+	}
+
+	public void setTransitions(List<Transition> transitions) {
+		this.transitions = transitions;
+	}
+
+	public List<Activity> getActivitiesList() {
+		return activitiesList;
+	}
+
+	public void setActivitiesList(List<Activity> activitiesList) {
+		this.activitiesList = activitiesList;
+	}
+
+	public List<CodeBook> getCodebooks(Integer size) {
+		setCodebookList(new ArrayList<CodeBook>());
+		for (Transition trans : getTransitions()) {
+			CodeBook codebook = new CodeBook();
+			Transition currentTransition = trans;
+			while (codebook.getSize() < size
+					&& hasNextTransition(currentTransition)) {
+				codebook.addTransition(currentTransition);
+				currentTransition = getNextTransition(currentTransition);
+			}
+			if (size.equals(codebook.getSize())) {
+				getCodebookList().add(codebook);
+			}
+		}
+		return codebookList;
+	}
+
+	public List<CodeBook> getCodebookList() {
+		return codebookList;
+	}
+
+	public boolean hasNextTransition(Transition currentTrans) {
+		String next = currentTrans.getTo().getId();
+		for (Transition transition : getTransitions()) {
+			if (next.equals(transition.getFrom().getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public Transition getNextTransition(Transition currentTrans) {
+		String next = currentTrans.getTo().getId();
+		for (Transition transition : getTransitions()) {
+			if (next.equals(transition.getFrom().getId())) {
+				return transition;
 			}
 		}
 		return null;

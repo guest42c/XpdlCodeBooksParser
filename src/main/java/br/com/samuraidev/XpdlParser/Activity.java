@@ -1,5 +1,7 @@
 package br.com.samuraidev.XpdlParser;
 
+import br.com.samuraidev.XpdlParser.enums.ActivityType;
+
 public class Activity {
 
 	private ActivityType type;

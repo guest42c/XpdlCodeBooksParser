@@ -1,5 +1,7 @@
 package br.com.samuraidev.XpdlParser;
 
+import java.util.List;
+
 /**
  * Hello world!
  * 
@@ -18,5 +20,10 @@ public class App {
 
 		System.out.println("\n\nbilling_advice_of_charge.xpdl");
 		parser.parse("resources/xpdl/billing_advice_of_charge.xpdl");
+
+		List<CodeBook> codebooks = parser.getCodebooks(3);
+		for (CodeBook cb : codebooks) {
+			System.out.println(cb);
+		}
 	}
 }
