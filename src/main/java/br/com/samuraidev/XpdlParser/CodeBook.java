@@ -15,19 +15,19 @@ public class CodeBook {
 	public CodeBook(Transition... codebooks) {
 		super();
 		for (Transition codebook : codebooks) {
-			getCodebooks().add(codebook);
+			getTransitions().add(codebook);
 		}
 	}
 
 	public Integer getSize() {
-		return getCodebooks() != null ? getCodebooks().size() : 0;
+		return getTransitions() != null ? getTransitions().size() : 0;
 	}
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		Transition transition = null;
-		for (int i = 0; i < getCodebooks().size(); i++) {
-			transition = getCodebooks().get(i);
+		for (int i = 0; i < getTransitions().size(); i++) {
+			transition = getTransitions().get(i);
 			sb.append(transition.getFrom().getType() + "->");
 		}
 		if (transition != null && transition.getTo() != null) {
@@ -36,7 +36,39 @@ public class CodeBook {
 		return sb.toString();
 	}
 
-	public List<Transition> getCodebooks() {
+	public boolean equals(CodeBook cb) {
+		if (cb.getTransitions().size() != this.getTransitions().size()) {
+			return false;
+		} else {
+			for (int i = 0; i < this.getTransitions().size(); i++) {
+				if (!this.getTransitions().get(i).getFrom().getType()
+						.equals(cb.getTransitions().get(i).getFrom().getType())
+						|| !this.getTransitions()
+								.get(i)
+								.getTo()
+								.getType()
+								.equals(cb.getTransitions().get(i).getTo()
+										.getType())) {
+					return false;
+				}
+			}
+		}
+
+		// System.out.println("-----------------------------");
+		// for (Transition tran : this.getTransitions()) {
+		// System.out.println(tran);
+		// }
+		//
+		// System.out.println("-----------------------------");
+		//
+		// for (Transition tran : cb.getTransitions()) {
+		// System.out.println(tran);
+		// }
+		// System.out.println("-----------------------------");
+		return true;
+	}
+
+	public List<Transition> getTransitions() {
 		return codebooks;
 	}
 
@@ -45,7 +77,7 @@ public class CodeBook {
 	}
 
 	public void addTransition(Transition transition) {
-		getCodebooks().add(transition);
+		getTransitions().add(transition);
 	}
 
 }

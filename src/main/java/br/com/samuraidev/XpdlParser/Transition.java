@@ -14,10 +14,8 @@ public class Transition {
 		StringBuilder sb = new StringBuilder();
 		sb.append("From: \n");
 		sb.append(from);
-		sb.append("\n");
 		sb.append("To: \n");
 		sb.append(to);
-		sb.append("\n");
 		return sb.toString();
 	}
 
