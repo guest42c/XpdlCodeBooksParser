@@ -32,10 +32,39 @@ public class ProcessLibraryStrategy implements RecommendationStrategy {
 		Activity similarActivity = getSimililarActivity(activityCodebooks,
 				similarContext, activity);
 		System.out.println(similarActivity);
-		// TODO Recomendar codebooks removendo as activities que precedem a
+		// Recomendar codebooks removendo as activities que precedem a
 		// activity similar
+		List<CodeBook> codebooks = similarContext.getCodebooksWithActivity(2,
+				similarActivity.getId());
+		List<Transition> recommendedTransitions = new ArrayList<Transition>();
+		for (CodeBook cb : codebooks) {
+			boolean encontrouActivity = false;
+			for (Transition trans : cb.getTransitions()) {
+				if (encontrouActivity) { // && !hasTransition(trans,
+											// recommendedTransitions)
+					recommendedTransitions.add(trans);
+				}
+				if (trans.getFrom().getId().equals(similarActivity.getId())) {
+					encontrouActivity = true;
+				}
+			}
+		}
+		System.out.println("----- RECOMMENDATION -----");
+		for (Transition t : recommendedTransitions) {
+			System.out.println(t);
+		}
 		return recommendationContext;
 	}
+
+	// private boolean hasTransition(Transition trans,
+	// List<Transition> recommendedTransitions) {
+	// for (Transition transition : recommendedTransitions) {
+	// if (transition.equals(trans)) {
+	// return true;
+	// }
+	// }
+	// return false;
+	// }
 
 	private Activity getSimililarActivity(List<CodeBook> activityCodebooks,
 			ProcessContext similarContext, Activity activity) {
