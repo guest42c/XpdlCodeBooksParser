@@ -3,6 +3,8 @@ package br.com.samuraidev.XpdlParser;
 import java.util.Date;
 import java.util.Random;
 
+import br.com.samuraidev.XpdlParser.enums.ActivityType;
+
 /**
  * Hello world!
  * 
@@ -21,6 +23,11 @@ public class App {
 		Activity randomActivity = uncompletedProcess.getActivitiesList().get(
 				randomizer.nextInt(uncompletedProcess.getActivitiesList()
 						.size()));
+		while (ActivityType.EVENT.equals(randomActivity.getType())) {
+			randomActivity = uncompletedProcess.getActivitiesList().get(
+					randomizer.nextInt(uncompletedProcess.getActivitiesList()
+							.size()));
+		}
 		System.out.println("Random activity to call the recommendation from");
 		System.out.println(randomActivity);
 

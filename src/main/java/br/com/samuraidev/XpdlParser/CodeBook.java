@@ -54,18 +54,17 @@ public class CodeBook {
 			}
 		}
 
-		// System.out.println("-----------------------------");
-		// for (Transition tran : this.getTransitions()) {
-		// System.out.println(tran);
-		// }
-		//
-		// System.out.println("-----------------------------");
-		//
-		// for (Transition tran : cb.getTransitions()) {
-		// System.out.println(tran);
-		// }
-		// System.out.println("-----------------------------");
 		return true;
+	}
+
+	public boolean hasId(String id) {
+		for (Transition trans : getTransitions()) {
+			if (trans.getFrom().getId().equals(id)
+					|| trans.getTo().getId().equals(id)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public List<Transition> getTransitions() {

@@ -118,8 +118,8 @@ public class ProcessContext {
 		}
 	}
 
-	private Activity getActivityById(String id) {
-		for (Activity activity : activitiesList) {
+	public Activity getActivityById(String id) {
+		for (Activity activity : getActivitiesList()) {
 			if (id.equals(activity.getId())) {
 				return activity;
 			}
@@ -163,6 +163,24 @@ public class ProcessContext {
 				currentTransition = getNextTransition(currentTransition);
 			}
 			if (size.equals(codebook.getSize())) {
+				getCodebookList().add(codebook);
+			}
+		}
+		return codebookList;
+	}
+
+	public List<CodeBook> getCodebooksWithActivity(Integer size,
+			String activityId) {
+		setCodebookList(new ArrayList<CodeBook>());
+		for (Transition trans : getTransitions()) {
+			CodeBook codebook = new CodeBook();
+			Transition currentTransition = trans;
+			while (codebook.getSize() < size
+					&& hasNextTransition(currentTransition)) {
+				codebook.addTransition(currentTransition);
+				currentTransition = getNextTransition(currentTransition);
+			}
+			if (size.equals(codebook.getSize()) && codebook.hasId(activityId)) {
 				getCodebookList().add(codebook);
 			}
 		}
