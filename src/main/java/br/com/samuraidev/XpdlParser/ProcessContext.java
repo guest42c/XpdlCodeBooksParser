@@ -152,15 +152,26 @@ public class ProcessContext {
 		this.activitiesList = activitiesList;
 	}
 
+	public List<CodeBook> getCodebooks2(Integer size) {
+		setCodebookList(new ArrayList<CodeBook>());
+		return codebookList;
+	}
+
+	public List<Transition> getCodebookBranches(String fromIf) {
+
+		return null;
+	}
+
 	public List<CodeBook> getCodebooks(Integer size) {
 		setCodebookList(new ArrayList<CodeBook>());
 		for (Transition trans : getTransitions()) {
 			CodeBook codebook = new CodeBook();
 			Transition currentTransition = trans;
+			// FIXME: quando existe uma mais de uma rota no processo como fazer?
 			while (codebook.getSize() < size
 					&& hasNextTransition(currentTransition)) {
 				codebook.addTransition(currentTransition);
-				currentTransition = getNextTransition(currentTransition);
+				// currentTransition = getNextTransition(currentTransition);
 			}
 			if (size.equals(codebook.getSize())) {
 				getCodebookList().add(codebook);
@@ -174,11 +185,12 @@ public class ProcessContext {
 		setCodebookList(new ArrayList<CodeBook>());
 		for (Transition trans : getTransitions()) {
 			CodeBook codebook = new CodeBook();
+			// FIXME: quando existe uma mais de uma rota no processo como fazer?
 			Transition currentTransition = trans;
 			while (codebook.getSize() < size
 					&& hasNextTransition(currentTransition)) {
 				codebook.addTransition(currentTransition);
-				currentTransition = getNextTransition(currentTransition);
+				// currentTransition = getNextTransition(currentTransition);
 			}
 			if (size.equals(codebook.getSize()) && codebook.hasId(activityId)) {
 				getCodebookList().add(codebook);
@@ -201,14 +213,14 @@ public class ProcessContext {
 		return false;
 	}
 
-	public Transition getNextTransition(Transition currentTrans) {
-		// FIXME: se tiver mais de uma transição de saida?
+	public List<Transition> getNextTransitions(Transition currentTrans) {
+		List<Transition> transitions = new ArrayList<Transition>();
 		String next = currentTrans.getTo().getId();
 		for (Transition transition : getTransitions()) {
 			if (next.equals(transition.getFrom().getId())) {
-				return transition;
+				transitions.add(transition);
 			}
 		}
-		return null;
+		return transitions;
 	}
 }
